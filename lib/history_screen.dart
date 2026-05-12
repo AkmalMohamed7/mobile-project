@@ -78,7 +78,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 }
 
-// بطاقة كل مسار
+// Route card
 class _RouteCard extends StatelessWidget {
   final SavedRoute route;
   final String tilesPath;
@@ -98,7 +98,7 @@ class _RouteCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Column(
         children: [
-          // معاينة الخريطة
+          // Map preview
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: SizedBox(
@@ -109,8 +109,7 @@ class _RouteCard extends StatelessWidget {
                         initialCenter: route.points[route.points.length ~/ 2],
                         initialZoom: 15,
                         interactionOptions: const InteractionOptions(
-                          flags:
-                              InteractiveFlag.none, // الخريطة مش قابلة للتحريك
+                          flags: InteractiveFlag.none, // map is not interactive
                         ),
                       ),
                       children: [
@@ -133,13 +132,13 @@ class _RouteCard extends StatelessWidget {
             ),
           ),
 
-          // معلومات المسار
+          // Route information
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // التاريخ
+                // Date
                 Row(
                   children: [
                     const Icon(
@@ -153,7 +152,7 @@ class _RouteCard extends StatelessWidget {
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                     const Spacer(),
-                    // زر الحذف
+                    // Delete button
                     IconButton(
                       icon: const Icon(Icons.delete_outline, color: Colors.red),
                       onPressed: () => showDialog(
@@ -184,7 +183,7 @@ class _RouteCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                // إحصائيات
+                // Statistics
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:latlong2/latlong.dart';
 
-// موديل المسار
+// Route model
 class SavedRoute {
   final String id;
   final DateTime date;
@@ -21,7 +21,7 @@ class SavedRoute {
     required this.points,
   });
 
-  // تحويل لـ JSON للحفظ
+  // Convert to JSON for saving
   Map<String, dynamic> toJson() => {
     'id': id,
     'date': date.toIso8601String(),
@@ -33,7 +33,7 @@ class SavedRoute {
         .toList(),
   };
 
-  // تحويل من JSON للقراءة
+  // Convert from JSON for loading
   factory SavedRoute.fromJson(Map<String, dynamic> json) => SavedRoute(
     id: json['id'],
     date: DateTime.parse(json['date']),
@@ -45,36 +45,36 @@ class SavedRoute {
         .toList(),
   );
 
-  // تنسيق الوقت
+  // Format duration
   String get formattedDuration {
     final m = (durationSeconds ~/ 60).toString().padLeft(2, '0');
     final s = (durationSeconds % 60).toString().padLeft(2, '0');
     return '$m:$s';
   }
 
-  // تنسيق التاريخ
+  // Format date
   String get formattedDate {
     return '${date.day}/${date.month}/${date.year} - ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
 
-// خدمة الحفظ والقراءة
+// Save/load service
 class RouteStorage {
   static Future<File> _getFile() async {
     final dir = await getApplicationDocumentsDirectory();
     return File('${dir.path}/routes.json');
   }
 
-  // حفظ مسار جديد
+  // Save new route
   static Future<void> saveRoute(SavedRoute route) async {
     final routes = await loadRoutes();
-    routes.insert(0, route); // الأحدث فوق
+    routes.insert(0, route); // newest first
     final file = await _getFile();
     final json = routes.map((r) => r.toJson()).toList();
     await file.writeAsString(jsonEncode(json));
   }
 
-  // جيب كل المسارات
+  // Load all routes
   static Future<List<SavedRoute>> loadRoutes() async {
     try {
       final file = await _getFile();
@@ -87,7 +87,7 @@ class RouteStorage {
     }
   }
 
-  // امسح مسار
+  // Delete route
   static Future<void> deleteRoute(String id) async {
     final routes = await loadRoutes();
     routes.removeWhere((r) => r.id == id);

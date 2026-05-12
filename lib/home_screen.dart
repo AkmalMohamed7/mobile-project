@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _timer;
   final MapController _mapController = MapController();
 
-  // ── السرعة الحالية ──
+  // ── current speed ──
   double currentSpeedKmh = 0;
 
   static const LatLng fayoumUniversity = LatLng(29.3084, 30.8428);
@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // ── نوع النشاط حسب السرعة ──
+  // ── activity type by speed ──
   Map<String, dynamic> getActivityInfo(double speedKmh) {
     if (speedKmh < 1.0) {
       return {
@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             routePoints.add(newPoint);
 
-            // السرعة الحالية من الـ GPS مباشرة (أدق من الحساب اليدوي)
+            // Current speed from GPS directly (more accurate than manual calculation)
             currentSpeedKmh = (pos.speed < 0 ? 0 : pos.speed) * 3.6;
           });
 
@@ -225,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Stack(
         children: [
-          // ── الخريطة ──
+          // ── map ──
           FlutterMap(
             mapController: _mapController,
             options: const MapOptions(
@@ -273,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
 
-          // ── لوحة المعلومات في الأسفل ──
+          // ── bottom info panel ──
           Positioned(
             bottom: 0,
             left: 0,
@@ -288,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ── نوع النشاط (يظهر فقط أثناء التتبع) ──
+                  // ── activity type (shown only while tracking) ──
                   if (isTracking) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -328,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 12),
                   ],
 
-                  // ── الإحصائيات ──
+                  // ── statistics ──
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -344,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Time',
                         Colors.blue,
                       ),
-                      // السرعة الحالية أثناء التتبع، المتوسط بعد الانتهاء
+                      // Current speed while tracking, average speed after stopping
                       if (isTracking)
                         _statCard(
                           Icons.speed,
@@ -363,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── زر ابدأ/وقف ──
+                  // ── start/stop button ──
                   SizedBox(
                     width: double.infinity,
                     height: 50,
