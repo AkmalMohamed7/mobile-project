@@ -6,14 +6,6 @@ A Flutter mobile application that tracks walking, jogging, and running routes on
 
 ---
 
-## 📱 Screenshots
-
-| Home Screen | Tracking Active | Route History |
-|-------------|-----------------|---------------|
-| Offline map of Fayoum University | Live route drawing with stats | Saved routes with map preview |
-
----
-
 ## ✨ Features
 
 - 🗺️ **Offline Map** – Works without internet using local OpenStreetMap tiles (Fayoum University area, 10 km²)
