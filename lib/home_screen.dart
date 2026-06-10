@@ -5,8 +5,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'tile_service.dart';
 import 'tile_provider.dart';
-import 'route_storage.dart';
-import 'history_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,23 +13,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // App State
   String? _tilesPath;
   bool _isLoadingTiles = true;
   String _loadingMessage = 'Loading map...';
 
+  // Tracking
   List<LatLng> routePoints = [];
   bool isTracking = false;
   StreamSubscription<Position>? _locationSub;
   double totalDistance = 0;
   int seconds = 0;
+  double currentSpeedKmh = 0;
   Timer? _timer;
   final MapController _mapController = MapController();
 
-  // ── current speed ──
-  double currentSpeedKmh = 0;
-
   static const LatLng fayoumUniversity = LatLng(29.3084, 30.8428);
 
+  // Init
   @override
   void initState() {
     super.initState();
@@ -51,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // ── activity type by speed ──
+  //Activity Type
   Map<String, dynamic> getActivityInfo(double speedKmh) {
     if (speedKmh < 1.0) {
       return {
@@ -76,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  //GPS Permission
   Future<bool> _requestPermission() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -93,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return true;
   }
 
+  //Start Tracking
   Future<void> startTracking() async {
     final hasPermission = await _requestPermission();
     if (!hasPermission) return;
@@ -105,10 +106,12 @@ class _HomeScreenState extends State<HomeScreen> {
       currentSpeedKmh = 0;
     });
 
+    //Timer
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       setState(() => seconds++);
     });
 
+    // GPS Stream
     _locationSub =
         Geolocator.getPositionStream(
           locationSettings: const LocationSettings(
@@ -117,50 +120,34 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ).listen((Position pos) {
           final newPoint = LatLng(pos.latitude, pos.longitude);
-
           setState(() {
             if (routePoints.isNotEmpty) {
-              final dist = Geolocator.distanceBetween(
+              totalDistance += Geolocator.distanceBetween(
                 routePoints.last.latitude,
                 routePoints.last.longitude,
                 newPoint.latitude,
                 newPoint.longitude,
               );
-              totalDistance += dist;
             }
             routePoints.add(newPoint);
-
-            // Current speed from GPS directly (more accurate than manual calculation)
             currentSpeedKmh = (pos.speed < 0 ? 0 : pos.speed) * 3.6;
           });
-
           _mapController.move(newPoint, 16);
         });
   }
 
-  Future<void> stopTracking() async {
+  //Stop Tracking
+  void stopTracking() {
     _locationSub?.cancel();
     _timer?.cancel();
     setState(() {
       isTracking = false;
       currentSpeedKmh = 0;
     });
-
-    if (routePoints.isNotEmpty) {
-      final avgSpeed = seconds > 0 ? (totalDistance / seconds) * 3.6 : 0.0;
-      final route = SavedRoute(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        date: DateTime.now(),
-        distanceKm: totalDistance / 1000,
-        durationSeconds: seconds,
-        avgSpeedKmh: avgSpeed,
-        points: List.from(routePoints),
-      );
-      await RouteStorage.saveRoute(route);
-      _showMessage('Route saved ✓');
-    }
+    _showMessage('Tracking stopped');
   }
 
+  //Helpers
   String get formattedTime {
     final m = (seconds ~/ 60).toString().padLeft(2, '0');
     final s = (seconds % 60).toString().padLeft(2, '0');
@@ -180,6 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  //Loading Screen
   Widget _buildLoadingScreen() {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -200,6 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Build
   @override
   Widget build(BuildContext context) {
     if (_isLoadingTiles) return _buildLoadingScreen();
@@ -211,21 +200,10 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Route Tracking - Fayoum U'),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => HistoryScreen(tilesPath: _tilesPath!),
-              ),
-            ),
-          ),
-        ],
       ),
       body: Stack(
         children: [
-          // ── map ──
+          //Map
           FlutterMap(
             mapController: _mapController,
             options: const MapOptions(
@@ -273,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
 
-          // ── bottom info panel ──
+          //Stats Panel
           Positioned(
             bottom: 0,
             left: 0,
@@ -288,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ── activity type (shown only while tracking) ──
+                  // Activity Badge
                   if (isTracking) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -328,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 12),
                   ],
 
-                  // ── statistics ──
+                  // Statistics
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -344,7 +322,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Time',
                         Colors.blue,
                       ),
-                      // Current speed while tracking, average speed after stopping
                       if (isTracking)
                         _statCard(
                           Icons.speed,
@@ -363,7 +340,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── start/stop button ──
+                  // Start/Stop Button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -392,6 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  //Stat Card
   Widget _statCard(IconData icon, String value, String label, Color color) {
     return Column(
       children: [
