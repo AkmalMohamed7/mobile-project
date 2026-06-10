@@ -208,7 +208,10 @@ Use **Lockito** (Android) or the **Emulator Extended Controls → Location** to 
 - If a tile is outside the Fayoum area, a transparent 1×1 px image is returned (no crash)
 - Current speed is read from `pos.speed` (GPS chip) for accuracy, not calculated manually
 - The history screen shows a non-interactive map preview (`InteractiveFlag.none`) for each saved route
+<<<<<<< HEAD
 
 
 This project is for educational purposes only.
 Map data © [OpenStreetMap contributors](https://www.openstreetmap.org/copyright)
+=======
+>>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
