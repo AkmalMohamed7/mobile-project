@@ -28,12 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _timer;
   final MapController _mapController = MapController();
 
-<<<<<<< HEAD
-=======
-  // ── current speed ──
-  double currentSpeedKmh = 0;
-
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
   static const LatLng fayoumUniversity = LatLng(29.3084, 30.8428);
 
   // Init
@@ -56,11 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-<<<<<<< HEAD
   //Activity Type
-=======
-  // ── activity type by speed ──
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
   Map<String, dynamic> getActivityInfo(double speedKmh) {
     if (speedKmh < 1.0) {
       return {
@@ -140,11 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }
             routePoints.add(newPoint);
-<<<<<<< HEAD
-=======
-
-            // Current speed from GPS directly (more accurate than manual calculation)
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
             currentSpeedKmh = (pos.speed < 0 ? 0 : pos.speed) * 3.6;
           });
           _mapController.move(newPoint, 16);
@@ -218,11 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Stack(
         children: [
-<<<<<<< HEAD
           //Map
-=======
-          // ── map ──
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
           FlutterMap(
             mapController: _mapController,
             options: const MapOptions(
@@ -270,11 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
 
-<<<<<<< HEAD
           //Stats Panel
-=======
-          // ── bottom info panel ──
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
           Positioned(
             bottom: 0,
             left: 0,
@@ -289,11 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-<<<<<<< HEAD
                   // Activity Badge
-=======
-                  // ── activity type (shown only while tracking) ──
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
                   if (isTracking) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -301,9 +274,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: (activityInfo['color'] as Color).withOpacity(
-                          0.1,
-                        ),
+                        color: (activityInfo['color'] as Color)
+                            .withAlpha((0.1 * 255).round()),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: activityInfo['color'] as Color,
@@ -333,11 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 12),
                   ],
 
-<<<<<<< HEAD
                   // Statistics
-=======
-                  // ── statistics ──
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -353,10 +321,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Time',
                         Colors.blue,
                       ),
-<<<<<<< HEAD
-=======
-                      // Current speed while tracking, average speed after stopping
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
                       if (isTracking)
                         _statCard(
                           Icons.speed,
@@ -375,11 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 16),
 
-<<<<<<< HEAD
                   // Start/Stop Button
-=======
-                  // ── start/stop button ──
->>>>>>> 7ab8b4cd9f65309beb2839f46c48fe9427505eb3
                   SizedBox(
                     width: double.infinity,
                     height: 50,
